@@ -13,6 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: run tests directly
         run: |
+          apt install libblas-dev liblapack-dev -y
           cd dftd4-src
           export DFTD4_SRC_DEV=1
           cargo test --test "*" -vv --features="build_from_source static" -- --nocapture
@@ -23,6 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: run tests directly
         run: |
+          apt install libblas-dev liblapack-dev -y
           cd dftd4-src
           cargo test --test "*" -vv --features="build_from_source" -- --nocapture
     
