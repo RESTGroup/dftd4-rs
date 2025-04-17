@@ -19,4 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: |
+          sudo apt install libblas-dev liblapack-dev -y
+          cargo clippy --all-targets --all-features -- -D warnings

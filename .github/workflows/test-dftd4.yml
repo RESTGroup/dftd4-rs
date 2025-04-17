@@ -14,7 +14,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
       - name: run tests directly
         run: |
-          apt install libblas-dev liblapack-dev -y
+          sudo apt install libblas-dev liblapack-dev -y
           cd dftd4
           conda install dftd4-python -c conda-forge
           ls /usr/share/miniconda/lib
