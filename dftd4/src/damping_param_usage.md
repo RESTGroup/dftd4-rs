@@ -12,7 +12,7 @@ In this crate, you may have three ways to define customized parameters:
     let param = DFTD4RationalDampingParam {
         s6: 1.0,
         s8: 1.683,
-        s9: 1.0
+        s9: 1.0,
         a1: 1.139,
         a2: 1.5,
         alp: 16.0,
@@ -26,7 +26,7 @@ In this crate, you may have three ways to define customized parameters:
     ```rust
   # use dftd4::prelude::*;
   # let atm = true;
-    let param = DFTD4RationalDampingParam::default()
+    let param = DFTD4RationalDampingParamBuilder::default()
         .s8(1.683)
         .a1(1.139)
         .a2(1.5)
@@ -39,7 +39,7 @@ In this crate, you may have three ways to define customized parameters:
     ```rust
   # use dftd4::prelude::*;
   # let atm = true;
-    let param = DFTD4Param::load_rational_damping(
+    let param = DFTD4Param::new_rational_damping(
         1.0,   // s6
         1.683, // s8
         1.0,   // s9

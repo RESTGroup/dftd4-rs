@@ -154,11 +154,11 @@ fn test_tpssd4s() {
     let model = DFTD4Model::new_d4s(&numbers, &positions, None, None, None);
 
     let param = DFTD4Param::load_rational_damping("tpss", false);
-    let res = model.get_dispersion_f(&param, false)?;
+    let res = model.get_dispersion(&param, false);
 
     assert_abs_diff_eq!(res.energy, -0.046233140236052253, epsilon = thr);
 
-    let res = model.get_dispersion_f(&param, true)?;
+    let res = model.get_dispersion(&param, true);
 
     assert_abs_diff_eq!(res.energy, -0.046233140236052253, epsilon = thr);
 }
@@ -233,13 +233,14 @@ fn test_r2scan3c() {
         .a1(0.42)
         .a2(5.65)
         .s9(2.0)
-        .build()?
+        .build()
+        .unwrap()
         .new_param();
-    let res = model.get_dispersion_f(&param, false)?;
+    let res = model.get_dispersion(&param, false);
 
     assert_abs_diff_eq!(res.energy, -0.008016697276824889, epsilon = thr);
 
-    let res = model.get_dispersion_f(&param, true)?;
+    let res = model.get_dispersion(&param, true);
 
     assert_abs_diff_eq!(res.energy, -0.008016697276824889, epsilon = thr);
 }

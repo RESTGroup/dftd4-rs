@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-    "dftd4",
+    "dftd4", "dftd4-src"
 ]
 
 [workspace.package]
