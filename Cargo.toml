@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = [
+    "dftd4",
+]
+
+[workspace.package]
+edition = "2021"
+version = "0.1.0"
+description = "dftd4 FFI bindings, wrappers and build-from-source"
+repository = "https://github.com/RESTGroup/dftd4-rs"
+keywords = ["ffi", "chemistry"]
+categories = ["science"]
+license = "LGPL-3.0"
+
+[workspace.dependencies]

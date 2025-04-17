@@ -1,0 +1,21 @@
+[package]
+name = "dftd4-src"
+description = "dftd4 build-from-source or library selection"
+readme = "readme.md"
+
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+license.workspace = true
+
+[dev-dependencies]
+dftd4 = { path = "../dftd4" }
+
+[build-dependencies]
+cmake = { version = "0.1" }
+
+[features]
+build_from_source = []
+static = []
