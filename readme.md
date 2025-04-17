@@ -124,6 +124,11 @@ If you have not compiled `dftd4` library, you may try out cargo feature `build_f
 ### Cargo features of `dftd4-src`
 
 - **`build_from_source`**: This will use CMake and meson, and pull code from github to first perform build for dftd4. Though this option can be developer-friendly (you do not need to perform any other configurations to make program compile and run by cargo), `build_from_source` does not provide customized compilation.
+
+    CMake configurable variables (can be defined as environment variables):
+    - `DFTD4_SRC`: git repository source directory or URL;
+    - `DFTD4_VER`: version of DFT-D4 (default v3.7.0);
+
 - **`static`**: This will link static libary instead of dynamic one. Please note that 1. static linking may require additional Fortran and OpenMP linking, which is not provided in this crate; 2. staticly linking LGPL-3.0 license may require your project to be GPL-3.0.
 
 ## License
