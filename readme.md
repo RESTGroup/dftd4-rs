@@ -27,48 +27,46 @@ This crate contains dftd4 FFI bindings and wrapper.
 For example, full code for computing B97m dispersion energy with D4:
 
 ```rust
-fn main() {
-    use dftd4::prelude::*;
-    
-    // atom indices
-    let numbers = vec![1, 6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 35, 6, 9, 9, 9];
-    // geometry in angstrom
-    #[rustfmt::skip]
-    let positions = vec![
-        0.002144194,   0.361043475,   0.029799709,
-        0.015020592,   0.274789738,   1.107648016,
-        1.227632658,   0.296655040,   1.794629427,
-        1.243958826,   0.183702791,   3.183703934,
-        0.047958213,   0.048915002,   3.886484583,
-       -1.165135654,   0.026954348,   3.200213281,
-       -1.181832083,   0.139828643,   1.810376587,
-        2.155807907,   0.399177037,   1.249441585,
-        2.184979344,   0.198598553,   3.716170761,
-        0.060934662,  -0.040672756,   4.964014252,
-       -2.093220602,  -0.078628959,   3.745125056,
-       -2.122845437,   0.123257119,   1.277645797,
-       -0.268325907,  -3.194209024,   1.994458950,
-        0.049999933,  -5.089197474,   1.929391171,
-        0.078949601,  -5.512441335,   0.671851563,
-        1.211983937,  -5.383996300,   2.498664481,
-       -0.909987405,  -5.743747328,   2.570721738,
-    ];
-    // convert angstrom to bohr
-    let positions = positions.iter().map(|&x| x / 0.52917721067).collect::<Vec<f64>>();
-    // generate DFTD4 model
-    let model = DFTD4Model::new(&numbers, &positions, None, None, None);
-    // retrive the DFTD4 parameters
-    let param = DFTD4Param::load_rational_damping("b97m", true);
-    // obtain the dispersion energy and gradient, without sigma
-    let (energy, gradient, _) = model.get_dispersion(&param, true).into();
-    let gradient = gradient.unwrap();
+use dftd4::prelude::*;
 
-    println!("Dispersion energy: {}", energy);
-    let energy_ref = -0.025765015532807658;
-    assert!((energy - energy_ref).abs() < 1e-9);
-    println!("Dispersion gradient:");
-    gradient.chunks(3).for_each(|chunk| println!("{:16.9?}", chunk));
-}
+// atom indices
+let numbers = vec![1, 6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 35, 6, 9, 9, 9];
+// geometry in angstrom
+#[rustfmt::skip]
+let positions = vec![
+    0.002144194,   0.361043475,   0.029799709,
+    0.015020592,   0.274789738,   1.107648016,
+    1.227632658,   0.296655040,   1.794629427,
+    1.243958826,   0.183702791,   3.183703934,
+    0.047958213,   0.048915002,   3.886484583,
+    -1.165135654,   0.026954348,   3.200213281,
+    -1.181832083,   0.139828643,   1.810376587,
+    2.155807907,   0.399177037,   1.249441585,
+    2.184979344,   0.198598553,   3.716170761,
+    0.060934662,  -0.040672756,   4.964014252,
+    -2.093220602,  -0.078628959,   3.745125056,
+    -2.122845437,   0.123257119,   1.277645797,
+    -0.268325907,  -3.194209024,   1.994458950,
+    0.049999933,  -5.089197474,   1.929391171,
+    0.078949601,  -5.512441335,   0.671851563,
+    1.211983937,  -5.383996300,   2.498664481,
+    -0.909987405,  -5.743747328,   2.570721738,
+];
+// convert angstrom to bohr
+let positions = positions.iter().map(|&x| x / 0.52917721067).collect::<Vec<f64>>();
+// generate DFTD4 model
+let model = DFTD4Model::new(&numbers, &positions, None, None, None);
+// retrive the DFTD4 parameters
+let param = DFTD4Param::load_rational_damping("b97m", true);
+// obtain the dispersion energy and gradient, without sigma
+let (energy, gradient, _) = model.get_dispersion(&param, true).into();
+let gradient = gradient.unwrap();
+
+println!("Dispersion energy: {}", energy);
+let energy_ref = -0.025765015532807658;
+assert!((energy - energy_ref).abs() < 1e-9);
+println!("Dispersion gradient:");
+gradient.chunks(3).for_each(|chunk| println!("{:16.9?}", chunk));
 ```
 
 ## Installation guide and Crate `dftd4-src`
