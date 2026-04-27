@@ -15,6 +15,16 @@ To specify custom DFT-D4 parameters, some structs you may interest.
 
 You may also check [`DFTD4Param`](interface::DFTD4Param), but note that this struct is somehow low-level API, so use it with more care.
 
+## Parameter database
+
+The [`parameters`] module provides access to the built-in DFT-D4 parameter
+database embedded from the original dftd4 library. This allows looking up
+damping parameters for various XC functionals by method name and variant:
+
+- [`dftd4_get_damping_param`](parameters::dftd4_get_damping_param): lookup parameters by method name and variant
+- [`dftd4_list_methods`](parameters::dftd4_list_methods): list all available methods in the database
+- [`dftd4_get_all_damping_params`](parameters::dftd4_get_all_damping_params): get all parameters for a given variant
+
 */
 #![doc = include_str!("../readme.md")]
 
