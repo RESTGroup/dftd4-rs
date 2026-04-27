@@ -12,14 +12,36 @@ license.workspace = true
 
 [dependencies]
 derive_builder = { version = "0.20" }
-duplicate = { version = "2.0" }
+libloading = { version = "0.8", optional = true }
+serde = { version = "1.0", features = ["derive"] }
+serde-inline-default = "1.0"
+toml = "0.8"
 
 [dev-dependencies]
 rstest = { version = "0.25" }
 approx = { version = "0.5" }
 
 [features]
-d4s = []
+# Default feature set
+default = ["api-v3_5", "dynamic_loading"]
+
+# Dynamic library loading support
+dynamic_loading = ["dep:libloading"]
+
+# API version features (cumulative)
+# Each version enables all functions introduced in that version
+# Note: dynamic_loading ignores API version features - all functions are available at runtime
+api-v3_0 = []
+api-v3_1 = ["api-v3_0"]
+api-v3_2 = ["api-v3_1"]
+api-v3_3 = ["api-v3_2"]
+api-v3_4 = ["api-v3_3"]
+api-v3_5 = ["api-v3_4"]
+api-v4_0 = ["api-v3_5"]
+
+[package.metadata.docs.rs]
+cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
+all-features = true
 
 [[example]]
 name = "energy_r2scan"
@@ -28,3 +50,16 @@ doc-scrape-examples = true
 [[example]]
 name = "gradient_b97m"
 doc-scrape-examples = true
+
+[[example]]
+name = "test_interface"
+doc-scrape-examples = true
+
+[[example]]
+name = "test_parameters"
+doc-scrape-examples = true
+
+[[example]]
+name = "test_parsing"
+doc-scrape-examples = true
+

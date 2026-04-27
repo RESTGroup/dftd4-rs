@@ -11,7 +11,7 @@ categories.workspace = true
 license.workspace = true
 
 [dev-dependencies]
-dftd4 = { path = "../dftd4" }
+dftd4 = { path = "../dftd4", default-features = false, features = ["api-v4_0"] }
 
 [build-dependencies]
 cmake = { version = "0.1" }
