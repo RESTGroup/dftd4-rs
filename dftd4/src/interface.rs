@@ -2,6 +2,8 @@
 
 use crate::ffi;
 use derive_builder::{Builder, UninitializedFieldError};
+use serde::{Deserialize, Serialize};
+use serde_inline_default::serde_inline_default;
 use std::ffi::{c_char, c_int, CStr};
 use std::ptr::{null, null_mut};
 use std::result::Result;
@@ -35,6 +37,7 @@ pub enum DFTD4Error {
     C(ffi::dftd4_error),
     Rust(String),
     BuilderError(UninitializedFieldError),
+    ParametersError(String),
 }
 
 impl From<UninitializedFieldError> for DFTD4Error {
@@ -98,6 +101,7 @@ impl DFTD4Error {
             DFTD4Error::BuilderError(ufe) => {
                 format!("Builder error: {:?}", ufe)
             },
+            DFTD4Error::ParametersError(msg) => msg.clone(),
         }
     }
 }
@@ -128,7 +132,7 @@ impl std::fmt::Display for DFTD4Error {
 
 /// Molecular structure data.
 ///
-/// Represents a wrapped structure object in `s-dftd4`. The molecular structure
+/// Represents a wrapped structure object in `dftd4`. The molecular structure
 /// data object has a fixed number of atoms and immutable atomic identifiers.
 ///
 /// Note that except for number of atoms is stored in this struct, geometric
@@ -300,6 +304,8 @@ impl DFTD4Structure {
 
 /* #endregion */
 
+/* #region DFTD4Param */
+
 /// Basic struct for damping parameters, representing a parametrization of
 /// a DFT-D4 method.
 ///
@@ -369,43 +375,91 @@ impl DFTD4Param {
     }
 }
 
+/* #region DFTD4ParamAPI trait */
+
+/// Trait for creating DFTD4Param from damping parameter structs.
+pub trait DFTD4ParamAPI: Sized {
+    fn new_param(self) -> DFTD4Param {
+        self.new_param_f().unwrap()
+    }
+    fn new_param_f(self) -> Result<DFTD4Param, DFTD4Error>;
+}
+
+/// Trait for loading DFTD4Param by method name.
+pub trait DFTD4LoadParamAPI {
+    fn load_param_f(method: &str, mdb: bool) -> Result<DFTD4Param, DFTD4Error>;
+}
+
+/* #endregion */
+
 /// DFTD4 rational damping parameters.
 #[doc = include_str!("damping_param_usage.md")]
-#[derive(Builder, Debug, Clone)]
+#[serde_inline_default]
+#[derive(Builder, Debug, Clone, Deserialize, Serialize)]
 #[builder(pattern = "owned", build_fn(error = "DFTD4Error"))]
 pub struct DFTD4RationalDampingParam {
     #[builder(default = 1.0)]
+    #[serde_inline_default(1.0)]
     #[doc = r"optional, default 1.0"]
     pub s6: f64,
     pub s8: f64,
     #[builder(default = 1.0)]
+    #[serde_inline_default(1.0)]
     #[doc = r"optional, default 1.0"]
     pub s9: f64,
     pub a1: f64,
     pub a2: f64,
     #[builder(default = 16.0)]
+    #[serde_inline_default(16.0)]
     #[doc = r"optional, default 16.0"]
     pub alp: f64,
 }
 
-impl DFTD4RationalDampingParam {
-    pub fn new_param(self) -> DFTD4Param {
-        self.new_param_f().unwrap()
-    }
-
-    pub fn new_param_f(self) -> Result<DFTD4Param, DFTD4Error> {
+impl DFTD4ParamAPI for DFTD4RationalDampingParam {
+    fn new_param_f(self) -> Result<DFTD4Param, DFTD4Error> {
         let Self { s6, s8, s9, a1, a2, alp } = self;
         DFTD4Param::new_rational_damping_f(s6, s8, s9, a1, a2, alp)
     }
 }
 
-impl DFTD4RationalDampingParamBuilder {
-    pub fn init(self) -> DFTD4Param {
-        self.init_f().unwrap()
+impl DFTD4LoadParamAPI for DFTD4RationalDampingParam {
+    fn load_param_f(method: &str, mdb: bool) -> Result<DFTD4Param, DFTD4Error> {
+        DFTD4Param::load_rational_damping_f(method, mdb)
     }
+}
 
-    pub fn init_f(self) -> Result<DFTD4Param, DFTD4Error> {
-        self.build()?.new_param_f()
+/* #region Macro-based implementations */
+
+macro_rules! impl_damping_param_builder {
+    ($feature:literal: $type:ty) => {
+        #[cfg(feature = $feature)]
+        impl $type {
+            pub fn init(self) -> DFTD4Param {
+                self.init_f().unwrap()
+            }
+            pub fn init_f(self) -> Result<DFTD4Param, DFTD4Error> {
+                self.build()?.new_param_f()
+            }
+        }
+    };
+}
+
+impl_damping_param_builder!("api-v3_0": DFTD4RationalDampingParamBuilder);
+
+/* #endregion */
+
+/// Load damping parameters by method name and DFT-D4 variant.
+///
+/// This is a convenience function that loads rational damping parameters
+/// for a given method name and variant specification.
+///
+/// - `variant` - damping variant, currently only `"d4bj"` is supported
+/// - `method` - name of the xc-functional (e.g., `"B3LYP"`)
+/// - `mdb` - use MBD parametrization (true) or ATM (false)
+pub fn dftd4_load_param(variant: &str, method: &str, mdb: bool) -> DFTD4Param {
+    match variant {
+        "d4bj" => DFTD4RationalDampingParam::load_param_f(method, mdb).unwrap(),
+        _ => panic!("Unknown damping variant: {}", variant),
     }
 }
 
@@ -444,6 +498,7 @@ impl From<DFTD4Output> for (f64, Option<Vec<f64>>, Option<Vec<f64>>) {
 /// ```ignore
 /// let (pair_energy2, pair_energy3) = dftd4_model.get_pairwise_dispersion(param).into();
 /// ```
+#[cfg(feature = "api-v3_2")]
 pub struct DFTD4PairwiseOutput {
     /// Pairwise additive pairwise energy (natom * natom)
     pub pair_energy2: Vec<f64>,
@@ -451,6 +506,7 @@ pub struct DFTD4PairwiseOutput {
     pub pair_energy3: Vec<f64>,
 }
 
+#[cfg(feature = "api-v3_2")]
 impl From<DFTD4PairwiseOutput> for (Vec<f64>, Vec<f64>) {
     fn from(output: DFTD4PairwiseOutput) -> Self {
         (output.pair_energy2, output.pair_energy3)
@@ -465,6 +521,7 @@ impl From<DFTD4PairwiseOutput> for (Vec<f64>, Vec<f64>) {
 /// ```ignore
 /// let (cn, charges, c6, alpha) = dftd4_model.get_properties(param).into();
 /// ```
+#[cfg(feature = "api-v3_1")]
 pub struct DFTD4PropertyOutput {
     /// Coordination number for all atoms (natoms).
     pub cn: Vec<f64>,
@@ -476,6 +533,7 @@ pub struct DFTD4PropertyOutput {
     pub alpha: Vec<f64>,
 }
 
+#[cfg(feature = "api-v3_1")]
 impl From<DFTD4PropertyOutput> for (Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>) {
     fn from(output: DFTD4PropertyOutput) -> Self {
         (output.cn, output.charges, output.c6, output.alpha)
@@ -527,7 +585,7 @@ impl DFTD4Model {
     }
 
     /// Create new D4S dispersion model from arrays (in Bohr).
-    #[cfg(feature = "d4s")]
+    #[cfg(feature = "api-v4_0")]
     pub fn new_d4s(
         numbers: &[usize],
         positions: &[f64],
@@ -542,7 +600,7 @@ impl DFTD4Model {
     ///
     /// - `ga` - Charge scaling height
     /// - `gc` - Charge scaling steepness
-    #[cfg(feature = "d4s")]
+    #[cfg(feature = "api-v4_0")]
     pub fn custom_d4s(
         numbers: &[usize],
         positions: &[f64],
@@ -553,6 +611,26 @@ impl DFTD4Model {
         periodic: Option<&[bool]>,
     ) -> Self {
         Self::custom_d4s_f(numbers, positions, ga, gc, charge, lattice, periodic).unwrap()
+    }
+
+    /// Create custom D4 model with parameters.
+    ///
+    /// - `ga` - Charge scaling height
+    /// - `gc` - Charge scaling steepness
+    /// - `wf` - Weighting factor
+    #[cfg(feature = "api-v3_1")]
+    #[allow(clippy::too_many_arguments)]
+    pub fn custom_d4(
+        numbers: &[usize],
+        positions: &[f64],
+        ga: f64,
+        gc: f64,
+        wf: f64,
+        charge: Option<f64>,
+        lattice: Option<&[f64]>,
+        periodic: Option<&[bool]>,
+    ) -> Self {
+        Self::custom_d4_f(numbers, positions, ga, gc, wf, charge, lattice, periodic).unwrap()
     }
 
     /// Evaluate the dispersion energy and its derivatives.
@@ -572,8 +650,18 @@ impl DFTD4Model {
     ///
     /// - `pair_energy2` - pairwise additive pairwise energy (natom * natom)
     /// - `pair_energy3` - pairwise non-additive pairwise energy (natom * natom)
+    #[cfg(feature = "api-v3_2")]
     pub fn get_pairwise_dispersion(&self, param: &DFTD4Param) -> DFTD4PairwiseOutput {
         self.get_pairwise_dispersion_f(param).unwrap()
+    }
+
+    /// Evaluate the numerical hessian of the dispersion.
+    ///
+    /// Returns a vector of size (natoms * 3 * natoms * 3) containing the
+    /// hessian matrix elements.
+    #[cfg(feature = "api-v3_5")]
+    pub fn get_numerical_hessian(&self, param: &DFTD4Param) -> Vec<f64> {
+        self.get_numerical_hessian_f(param).unwrap()
     }
 
     /// Evaluate properties related to the dispersion model.
@@ -584,6 +672,7 @@ impl DFTD4Model {
     /// - `charges` - Partial charges for all atoms (natoms)
     /// - `c6` - C6 coefficients for all atom pairs (natoms * natoms)
     /// - `alpha` - Static polarizability for all atoms (natoms)
+    #[cfg(feature = "api-v3_1")]
     pub fn get_properties(&self) -> DFTD4PropertyOutput {
         self.get_properties_f().unwrap()
     }
@@ -633,7 +722,7 @@ impl DFTD4Model {
     /// # See also
     ///
     /// [`DFTD4Model::new_d4s`]
-    #[cfg(feature = "d4s")]
+    #[cfg(feature = "api-v4_0")]
     pub fn new_d4s_f(
         numbers: &[usize],
         positions: &[f64],
@@ -655,7 +744,7 @@ impl DFTD4Model {
     /// # See also
     ///
     /// [`DFTD4Model::custom_d4s`]
-    #[cfg(feature = "d4s")]
+    #[cfg(feature = "api-v4_0")]
     pub fn custom_d4s_f(
         numbers: &[usize],
         positions: &[f64],
@@ -668,6 +757,33 @@ impl DFTD4Model {
         let structure = DFTD4Structure::new_f(numbers, positions, charge, lattice, periodic)?;
         let mut error = DFTD4Error::new();
         let ptr = unsafe { ffi::dftd4_custom_d4s_model(error.get_c_ptr(), structure.ptr, ga, gc) };
+        match error.check() {
+            true => Err(error),
+            false => Ok(Self { ptr, structure }),
+        }
+    }
+
+    /// Create custom D4 model with parameters (failable).
+    ///
+    /// # See also
+    ///
+    /// [`DFTD4Model::custom_d4`]
+    #[cfg(feature = "api-v3_1")]
+    #[allow(clippy::too_many_arguments)]
+    pub fn custom_d4_f(
+        numbers: &[usize],
+        positions: &[f64],
+        ga: f64,
+        gc: f64,
+        wf: f64,
+        charge: Option<f64>,
+        lattice: Option<&[f64]>,
+        periodic: Option<&[bool]>,
+    ) -> Result<Self, DFTD4Error> {
+        let structure = DFTD4Structure::new_f(numbers, positions, charge, lattice, periodic)?;
+        let mut error = DFTD4Error::new();
+        let ptr =
+            unsafe { ffi::dftd4_custom_d4_model(error.get_c_ptr(), structure.ptr, ga, gc, wf) };
         match error.check() {
             true => Err(error),
             false => Ok(Self { ptr, structure }),
@@ -718,6 +834,7 @@ impl DFTD4Model {
     /// # See also
     ///
     /// [`DFTD4Model::get_pairwise_dispersion`]
+    #[cfg(feature = "api-v3_2")]
     pub fn get_pairwise_dispersion_f(
         &self,
         param: &DFTD4Param,
@@ -744,11 +861,40 @@ impl DFTD4Model {
         }
     }
 
+    /// Evaluate the numerical hessian (failable).
+    ///
+    /// # See also
+    ///
+    /// [`DFTD4Model::get_numerical_hessian`]
+    #[cfg(feature = "api-v3_5")]
+    pub fn get_numerical_hessian_f(&self, param: &DFTD4Param) -> Result<Vec<f64>, DFTD4Error> {
+        let structure = &self.structure;
+        let natoms = structure.get_natoms();
+        let n = 3 * natoms;
+        let mut hess = vec![0.0; n * n];
+        let mut error = DFTD4Error::new();
+
+        unsafe {
+            ffi::dftd4_get_numerical_hessian(
+                error.get_c_ptr(),
+                structure.ptr,
+                self.ptr,
+                param.ptr,
+                hess.as_mut_ptr(),
+            )
+        };
+        match error.check() {
+            true => Err(error),
+            false => Ok(hess),
+        }
+    }
+
     /// Evaluate properties related to the dispersion model (failable).
     ///
     /// # See also
     ///
     /// [`DFTD4Model::get_properties`]
+    #[cfg(feature = "api-v3_1")]
     pub fn get_properties_f(&self) -> Result<DFTD4PropertyOutput, DFTD4Error> {
         let structure = &self.structure;
         let natoms = structure.get_natoms();

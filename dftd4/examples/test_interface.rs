@@ -125,7 +125,7 @@ fn test_blypd4() {
     assert_abs_diff_eq!(res.energy, -0.06991716314879085, epsilon = thr);
 }
 
-#[cfg(feature = "d4s")]
+#[cfg(feature = "api-v4_0")]
 fn test_tpssd4s() {
     // Use TPSS-D4S for a mindless molecule
     let thr = 1.0e-7;
@@ -200,7 +200,7 @@ fn test_pbed4() {
     assert_abs_diff_eq!(res.energy, -0.028415184156428127, epsilon = thr);
 }
 
-#[cfg(feature = "d4s")]
+#[cfg(feature = "api-v4_0")]
 fn test_r2scan3c() {
     // Use r2SCAN-3c for a mindless molecule
     let thr = 1.0e-8;
@@ -414,10 +414,10 @@ fn test() {
     test_rational_damping_noargs();
     test_structure();
     test_blypd4();
-    #[cfg(feature = "d4s")]
+    #[cfg(feature = "api-v4_0")]
     test_tpssd4s();
     test_pbed4();
-    #[cfg(feature = "d4s")]
+    #[cfg(feature = "api-v4_0")]
     test_r2scan3c();
     test_pair_resolved();
     test_properties();
@@ -427,10 +427,10 @@ fn main() {
     test_rational_damping_noargs();
     test_structure();
     test_blypd4();
-    #[cfg(feature = "d4s")]
+    #[cfg(feature = "api-v4_0")]
     test_tpssd4s();
     test_pbed4();
-    #[cfg(feature = "d4s")]
+    #[cfg(feature = "api-v4_0")]
     test_r2scan3c();
     test_pair_resolved();
     test_properties();
