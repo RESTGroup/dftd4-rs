@@ -244,10 +244,12 @@ pub fn dftd4_list_methods() -> Vec<String> {
 /* #region Internal helper functions */
 
 /// Normalize version string (handle aliases like "d4bj" -> "bj-eeq-atm").
+/// `"d4"`, `"d4bj"`, `"bj"`, and `"atm"` all resolve to `"bj-eeq-atm"` (the
+/// default).
 pub(crate) fn normalize_version(version: &str) -> String {
     let version_lower = version.to_lowercase().replace(['-', '_', ' '], "");
     match version_lower.as_str() {
-        "d4bj" | "bj" | "bjeeqatm" | "atm" => "bj-eeq-atm",
+        "d4" | "d4bj" | "bj" | "bjeeqatm" | "atm" => "bj-eeq-atm",
         "bjeeqtwo" | "two" => "bj-eeq-two",
         "bjeeqmbd" | "mbd" => "bj-eeq-mbd",
         _ => &version_lower,
@@ -360,6 +362,7 @@ mod tests {
 
     #[test]
     fn test_normalize_version() {
+        assert_eq!(normalize_version("d4"), "bj-eeq-atm");
         assert_eq!(normalize_version("d4bj"), "bj-eeq-atm");
         assert_eq!(normalize_version("bj"), "bj-eeq-atm");
         assert_eq!(normalize_version("atm"), "bj-eeq-atm");

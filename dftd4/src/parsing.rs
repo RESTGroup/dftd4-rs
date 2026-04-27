@@ -8,8 +8,14 @@
 //!
 //! - **Usual case with method**: `{version = "d4bj", method = "b3lyp"}` Lookup
 //!   B3LYP-D4(BJ-EEQ-ATM) parameters from the database.
-//! - **Version aliases**: `{version = "bj", method = "b3lyp"}` or `{version =
-//!   "atm", method = "b3lyp"}` The `d4` prefix and `bj-eeq-` part are optional.
+//! - **Default version**: `version = "d4"`, `"d4bj"`, `"bj"`, or `"atm"` all
+//!   resolve to the **bj-eeq-atm** variant (Becke-Johnson damping with ATM
+//!   three-body dispersion), which is the standard and most commonly used
+//!   DFT-D4 model. This is the default variant in the upstream dftd4 parameter
+//!   database.
+//! - **Other variants**: Use `version = "two"` for bj-eeq-two (no three-body
+//!   term, s9 = 0), or `version = "mbd"` for bj-eeq-mbd (MBD-style three-body).
+//! - **Version aliases**: The `d4` prefix and `bj-eeq-` part are optional.
 //!   Version is case-insensitive.
 //! - **Direct parameters**: `{version = "d4bj", a1 = 0.40868035, s8 =
 //!   2.02929367, a2 = 4.53807137}` Specify parameters directly without the

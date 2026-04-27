@@ -155,6 +155,15 @@ method = "b3lyp""#;
     assert_abs_diff_eq!(param.param.a1, 0.40868035);
 }
 
+// --- version = "d4" also resolves to bj-eeq-atm (the default) ---
+#[test]
+fn test_version_d4_alias() {
+    let param =
+        dftd4_parse_damping_param_from_toml_f(r#"{version = "d4", method = "b3lyp"}"#).unwrap();
+    assert_abs_diff_eq!(param.param.a1, 0.40868035);
+    assert_abs_diff_eq!(param.param.s9, 1.0); // atm is default
+}
+
 // --- MBD variant ---
 #[test]
 fn test_mbd_variant() {

@@ -157,7 +157,7 @@ fn test_tpssd4s() {
 
     let model = DFTD4Model::new_d4s(&numbers, &positions, None, None, None);
 
-    let param = DFTD4Param::load_rational_damping("tpss", false);
+    let param = DFTD4Param::load_rational_damping("tpss", true);
     let res = model.get_dispersion(&param, false);
 
     assert_abs_diff_eq!(res.energy, -0.046233140236052253, epsilon = thr);
