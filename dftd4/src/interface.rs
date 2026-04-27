@@ -356,17 +356,17 @@ impl DFTD4Param {
     /// Load damping parameters from internal storage.
     ///
     /// - `name` - name of the xc-functional
-    /// - `mdb` - use three-body specific parametrization
-    pub fn load_rational_damping(name: &str, mdb: bool) -> Self {
-        Self::load_rational_damping_f(name, mdb).unwrap()
+    /// - `atm` - use three-body specific parametrization
+    pub fn load_rational_damping(name: &str, atm: bool) -> Self {
+        Self::load_rational_damping_f(name, atm).unwrap()
     }
 
     /// Load damping parameters from internal storage (failable).
-    pub fn load_rational_damping_f(name: &str, mdb: bool) -> Result<Self, DFTD4Error> {
+    pub fn load_rational_damping_f(name: &str, atm: bool) -> Result<Self, DFTD4Error> {
         let mut error = DFTD4Error::new();
         let name = std::ffi::CString::new(name).unwrap();
         let ptr = unsafe {
-            ffi::dftd4_load_rational_damping(error.get_c_ptr(), name.as_ptr() as *mut c_char, mdb)
+            ffi::dftd4_load_rational_damping(error.get_c_ptr(), name.as_ptr() as *mut c_char, atm)
         };
         match error.check() {
             true => Err(error),
@@ -387,7 +387,7 @@ pub trait DFTD4ParamAPI: Sized {
 
 /// Trait for loading DFTD4Param by method name.
 pub trait DFTD4LoadParamAPI {
-    fn load_param_f(method: &str, mdb: bool) -> Result<DFTD4Param, DFTD4Error>;
+    fn load_param_f(method: &str, atm: bool) -> Result<DFTD4Param, DFTD4Error>;
 }
 
 /* #endregion */
@@ -423,8 +423,8 @@ impl DFTD4ParamAPI for DFTD4RationalDampingParam {
 }
 
 impl DFTD4LoadParamAPI for DFTD4RationalDampingParam {
-    fn load_param_f(method: &str, mdb: bool) -> Result<DFTD4Param, DFTD4Error> {
-        DFTD4Param::load_rational_damping_f(method, mdb)
+    fn load_param_f(method: &str, atm: bool) -> Result<DFTD4Param, DFTD4Error> {
+        DFTD4Param::load_rational_damping_f(method, atm)
     }
 }
 
@@ -455,10 +455,10 @@ impl_damping_param_builder!("api-v3_0": DFTD4RationalDampingParamBuilder);
 ///
 /// - `variant` - damping variant, currently only `"d4bj"` is supported
 /// - `method` - name of the xc-functional (e.g., `"B3LYP"`)
-/// - `mdb` - use MBD parametrization (true) or ATM (false)
-pub fn dftd4_load_param(variant: &str, method: &str, mdb: bool) -> DFTD4Param {
+/// - `atm` - use MBD parametrization (true) or ATM (false)
+pub fn dftd4_load_param(variant: &str, method: &str, atm: bool) -> DFTD4Param {
     match variant {
-        "d4bj" => DFTD4RationalDampingParam::load_param_f(method, mdb).unwrap(),
+        "d4bj" => DFTD4RationalDampingParam::load_param_f(method, atm).unwrap(),
         _ => panic!("Unknown damping variant: {}", variant),
     }
 }

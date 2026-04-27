@@ -1,3 +1,7 @@
+//! Integration tests for dftd4 interface.
+//!
+//! However, perhaps some functions can be captured in documentation.
+//! So this file is here.
 #![allow(clippy::excessive_precision)]
 
 use approx::assert_abs_diff_eq;
@@ -115,7 +119,7 @@ fn test_blypd4() {
 
     let model = DFTD4Model::new(&numbers, &positions, None, None, None);
 
-    let param = DFTD4Param::load_rational_damping("blyp", false);
+    let param = DFTD4Param::load_rational_damping("blyp", true);
     let res = model.get_dispersion(&param, false);
 
     assert_abs_diff_eq!(res.energy, -0.06991716314879085, epsilon = thr);
@@ -190,7 +194,7 @@ fn test_pbed4() {
 
     let model = DFTD4Model::new(&numbers, &positions, None, None, None);
 
-    let param = DFTD4Param::load_rational_damping("pbe", false);
+    let param = DFTD4Param::load_rational_damping("pbe", true);
     let res = model.get_dispersion(&param, false);
 
     assert_abs_diff_eq!(res.energy, -0.028415184156428127, epsilon = thr);
@@ -200,9 +204,9 @@ fn test_pbed4() {
     assert_abs_diff_eq!(res.energy, -0.028415184156428127, epsilon = thr);
 }
 
-#[cfg(feature = "api-v4_0")]
+#[cfg(feature = "api-v3_1")]
 fn test_r2scan3c() {
-    // Use r2SCAN-3c for a mindless molecule
+    // Use r2SCAN-3c for a mindless molecule (custom D4 model)
     let thr = 1.0e-8;
 
     let numbers = vec![1, 9, 15, 13, 1, 1, 13, 5, 3, 15, 8, 1, 1, 5, 16, 1];
@@ -226,7 +230,8 @@ fn test_r2scan3c() {
          4.34858700256050,  2.39171478113440, -2.61802993563738,
     ];
 
-    let model = DFTD4Model::custom_d4s(&numbers, &positions, 2.0, 1.0, None, None, None);
+    // Python test uses custom D4 model with ga=2.0, gc=1.0
+    let model = DFTD4Model::custom_d4(&numbers, &positions, 2.0, 1.0, 6.0, None, None, None);
 
     let param = DFTD4RationalDampingParamBuilder::default()
         .s8(0.0)
@@ -245,6 +250,7 @@ fn test_r2scan3c() {
     assert_abs_diff_eq!(res.energy, -0.008016697276824889, epsilon = thr);
 }
 
+#[cfg(feature = "api-v3_2")]
 fn test_pair_resolved() {
     // Calculate pairwise resolved dispersion energy for a molecule
     let thr = 1.0e-8;
@@ -304,6 +310,7 @@ fn test_pair_resolved() {
     }
 }
 
+#[cfg(feature = "api-v3_1")]
 fn test_properties() {
     // Calculate dispersion related properties for a molecule
     let thr = 1.0e-7;
@@ -409,6 +416,12 @@ fn test_properties() {
     }
 }
 
+fn test_error_model() {
+    // Test loading an unknown method produces an error
+    let param = DFTD4Param::load_rational_damping_f("UNKNOWN_METHOD", false);
+    assert!(param.is_err_and(|e| e.to_string().contains("not known")));
+}
+
 #[test]
 fn test() {
     test_rational_damping_noargs();
@@ -417,10 +430,13 @@ fn test() {
     #[cfg(feature = "api-v4_0")]
     test_tpssd4s();
     test_pbed4();
-    #[cfg(feature = "api-v4_0")]
+    #[cfg(feature = "api-v3_1")]
     test_r2scan3c();
+    #[cfg(feature = "api-v3_2")]
     test_pair_resolved();
+    #[cfg(feature = "api-v3_1")]
     test_properties();
+    test_error_model();
 }
 
 fn main() {
@@ -430,8 +446,11 @@ fn main() {
     #[cfg(feature = "api-v4_0")]
     test_tpssd4s();
     test_pbed4();
-    #[cfg(feature = "api-v4_0")]
+    #[cfg(feature = "api-v3_1")]
     test_r2scan3c();
+    #[cfg(feature = "api-v3_2")]
     test_pair_resolved();
+    #[cfg(feature = "api-v3_1")]
     test_properties();
+    test_error_model();
 }
