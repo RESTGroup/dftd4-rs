@@ -102,6 +102,27 @@ fn load_data_base() -> Result<ParameterDataBase, DFTD4Error> {
         .map_err(|e| DFTD4Error::ParametersError(format!("TOML parsing error: {}", e)))
 }
 
+/// Look up a method in the parameter database using normalized key matching.
+/// The input method name is normalized, and keys in the database are also
+/// normalized for comparison (e.g., "dftb_mio" matches input "dftb-mio").
+fn lookup_method<'a>(
+    db: &'a ParameterDataBase,
+    method: &str,
+) -> Result<(String, &'a D4Variants), DFTD4Error> {
+    let method_lower = normalize_method(method);
+    // First try exact match (most common case)
+    if let Some(entry) = db.parameter.get(&method_lower) {
+        return Ok((method_lower, entry));
+    }
+    // Fall back to normalized key comparison
+    for (key, entry) in &db.parameter {
+        if normalize_method(key) == method_lower {
+            return Ok((key.clone(), entry));
+        }
+    }
+    Err(DFTD4Error::ParametersError(format!("Method '{}' not found in database", method)))
+}
+
 /// Get damping parameters for a specific method and variant.
 ///
 /// # Arguments
@@ -122,13 +143,10 @@ pub fn dftd4_get_damping_param_f(
     version: &str,
 ) -> Result<DFTD4DampingParam, DFTD4Error> {
     let db = load_data_base()?;
-    let method_lower = normalize_method(method);
     let version_normalized = normalize_version(version);
 
-    // Get method entry
-    let method_entry = db.parameter.get(&method_lower).ok_or_else(|| {
-        DFTD4Error::ParametersError(format!("Method '{}' not found in database", method))
-    })?;
+    // Get method entry using normalized lookup
+    let (_, method_entry) = lookup_method(&db, method)?;
 
     // Get variant entry
     let (entry_raw, default_entry) = get_variant_entry(method_entry, &version_normalized, &db)?;
@@ -148,12 +166,9 @@ pub fn dftd4_get_damping_param_f(
 #[allow(dead_code)]
 pub(crate) fn get_merged_param_table(method: &str, version: &str) -> Result<Table, DFTD4Error> {
     let db = load_data_base()?;
-    let method_lower = normalize_method(method);
     let version_normalized = normalize_version(version);
 
-    let method_entry = db.parameter.get(&method_lower).ok_or_else(|| {
-        DFTD4Error::ParametersError(format!("Method '{}' not found in database", method))
-    })?;
+    let (_, method_entry) = lookup_method(&db, method)?;
 
     let (entry_raw, default_entry) = get_variant_entry(method_entry, &version_normalized, &db)?;
     Ok(merge_tables(&entry_raw, &default_entry))
@@ -302,7 +317,7 @@ fn extract_doi(table: &Table) -> Option<String> {
 }
 
 /// Convert merged TOML table directly to DFTD4DampingParam via serde.
-fn convert_to_damping_param(merged: &Table) -> Result<DFTD4DampingParam, DFTD4Error> {
+pub(crate) fn convert_to_damping_param(merged: &Table) -> Result<DFTD4DampingParam, DFTD4Error> {
     let doi = extract_doi(merged);
     let param = deserialize_table(merged)?;
     Ok(DFTD4DampingParam { param, doi })

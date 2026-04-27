@@ -59,3 +59,7 @@ doc-scrape-examples = true
 name = "test_parameters"
 doc-scrape-examples = true
 
+[[example]]
+name = "test_parsing"
+doc-scrape-examples = true
+
