@@ -14,7 +14,7 @@ license.workspace = true
 dftd4 = { path = "../dftd4" }
 
 [build-dependencies]
-cmake = { version = "0.1" }
+cmake = { version = "0.1", default-features = false, features = ["api-v4_0"] }
 
 [features]
 build_from_source = []

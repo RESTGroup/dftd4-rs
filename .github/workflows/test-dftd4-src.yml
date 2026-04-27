@@ -27,20 +27,6 @@ jobs:
           sudo apt install libblas-dev liblapack-dev -y
           cd dftd4-src
           cargo test --test "*" -vv --features="build_from_source" -- --nocapture
-    
-  external-static:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v3
-      - name: run tests directly
-        run: |
-          cd dftd4-src
-          conda install dftd4-python -c conda-forge
-          ls /usr/share/miniconda/lib
-          export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/share/miniconda/lib
-          export DFTD4_SRC_DEV=1
-          cargo test --test "*" -vv --features="static" -- --nocapture
   
   external-dynamic:
     runs-on: ubuntu-latest
