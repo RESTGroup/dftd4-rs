@@ -2,7 +2,7 @@
 
 This project contains dftd4 FFI bindings, wrapper and build-from-source.
 
-Current binding of dftd4: [bb9bd94](https://github.com/dftd4/dftd4/commit/bb9bd9459566a4199ea1a73488008c27ad029ecb) (after [![v3.7.0](https://img.shields.io/github/v/release/dftd4/dftd4)](https://github.com/dftd4/dftd4/releases/v3.7.0))
+Current binding of dftd4: [![v4.1.0](https://img.shields.io/github/v/release/dftd4/dftd4)](https://github.com/dftd4/dftd4/releases/v4.1.0))
 
 Source code of dftd4 is available on [github](https://github.com/dftd4/dftd4).
 
@@ -16,7 +16,7 @@ This crate contains dftd4 FFI bindings and wrapper.
 |--|--|
 | Crate | [![Crate](https://img.shields.io/crates/v/dftd4.svg)](https://crates.io/crates/dftd4) |
 | API Document | [![API Documentation](https://docs.rs/dftd4/badge.svg)](https://docs.rs/dftd4) |
-| FFI Binding | [bb9bd94](https://github.com/dftd4/dftd4/commit/bb9bd9459566a4199ea1a73488008c27ad029ecb) after [![v3.7.0](https://img.shields.io/github/v/release/dftd4/dftd4)](https://github.com/dftd4/dftd4/releases/v3.7.0) |
+| FFI Binding | [![v4.1.0](https://img.shields.io/github/v/release/dftd4/dftd4)](https://github.com/dftd4/dftd4/releases/v4.1.0) |
 
 ### Example: B97m with D4
 
@@ -105,7 +105,7 @@ Default cargo features of `dftd4` are:
 
 Other cargo features of `dftd4` are:
 - **`api-v3_0`** through **`api-v4_0`**: Versioned API features (cumulative). Each version enables all functions introduced in that version. Note: dynamic loading ignores API version features — all functions are available at runtime.
-- **`api-v4_0`**: Enables D4S dispersion model support. Please note that this is not available in the latest stable release of dftd4 (at the time writing this readme, is v3.7.0). Unless you build dftd4 from git repository, you may not use this feature (especially installed dftd4 from conda or similar).
+- **`api-v4_0`**: Enables D4S dispersion model support.
 
 ## Installation guide and Crate `dftd4-src`
 
@@ -167,7 +167,7 @@ If you have not compiled `dftd4` library, you may try out cargo feature `build_f
 
     CMake configurable variables (can be defined as environment variables):
     - `DFTD4_SRC`: git repository source directory or URL;
-    - `DFTD4_VER`: version of DFT-D4 (default v3.7.0);
+    - `DFTD4_VER`: version of DFT-D4 (default v4.1.0);
 
 - **`static`**: This will link static libary instead of dynamic one. Please note that 1. static linking may require additional Fortran and OpenMP linking, which is not provided in this crate; 2. staticly linking LGPL-3.0 license may require your project to be GPL-3.0.
 
