@@ -55,3 +55,7 @@ doc-scrape-examples = true
 name = "test_interface"
 doc-scrape-examples = true
 
+[[example]]
+name = "test_parameters"
+doc-scrape-examples = true
+
