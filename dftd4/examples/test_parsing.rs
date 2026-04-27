@@ -140,10 +140,32 @@ fn test_method_name_with_underscores() {
     assert_abs_diff_eq!(param.param.s8, 0.60187490);
 }
 
+// --- Omitting version defaults to bj-eeq-atm ---
 #[test]
-fn test_missing_version_error() {
-    let result = dftd4_parse_damping_param_from_toml_f(r#"{method = "b3lyp"}"#);
-    assert!(result.is_err());
+fn test_no_version_defaults_to_bj_eeq_atm() {
+    let param = dftd4_parse_damping_param_from_toml_f(r#"{method = "b3lyp"}"#).unwrap();
+    assert_abs_diff_eq!(param.param.a1, 0.40868035);
+    assert_abs_diff_eq!(param.param.s9, 1.0); // atm default
+}
+
+// --- No version with direct parameters ---
+#[test]
+fn test_no_version_direct_params() {
+    let param = dftd4_parse_damping_param_from_toml_f(
+        r#"{a1 = 0.40868035, s8 = 2.02929367, a2 = 4.53807137}"#,
+    )
+    .unwrap();
+    assert_abs_diff_eq!(param.param.s6, 1.0); // from defaults
+    assert_abs_diff_eq!(param.param.a1, 0.40868035);
+}
+
+// --- No version with atm = false ---
+#[test]
+fn test_no_version_atm_false() {
+    let param =
+        dftd4_parse_damping_param_from_toml_f(r#"{method = "b3lyp", atm = false}"#).unwrap();
+    assert_abs_diff_eq!(param.param.a1, 0.40868035);
+    assert_abs_diff_eq!(param.param.s9, 0.0); // atm = false
 }
 
 // --- dftd4_parse_damping_param_from_toml_f with standard TOML ---

@@ -13,6 +13,9 @@
 //!   three-body dispersion), which is the standard and most commonly used
 //!   DFT-D4 model. This is the default variant in the upstream dftd4 parameter
 //!   database.
+//! - **Omitting version**: The `version` field is optional. If omitted, it
+//!   defaults to bj-eeq-atm. For example, `{method = "b3lyp"}` is equivalent to
+//!   `{version = "d4", method = "b3lyp"}`.
 //! - **Other variants**: Use `version = "two"` for bj-eeq-two (no three-body
 //!   term, s9 = 0), or `version = "mbd"` for bj-eeq-mbd (MBD-style three-body).
 //! - **Version aliases**: The `d4` prefix and `bj-eeq-` part are optional.
@@ -75,7 +78,7 @@ const VALID_FIELDS: &[&str] = &["s6", "s8", "s9", "a1", "a2", "alp"];
 
 /// Parse damping parameters from a TOML table.
 ///
-/// The table must contain a `version` field specifying the DFT-D4 variant.
+/// The `version` field is optional and defaults to bj-eeq-atm if omitted.
 /// Optional `method` field triggers a database lookup, and `atm` controls
 /// the three-body dispersion term (s9). Remaining fields are treated as
 /// damping parameters or overrides.
@@ -83,7 +86,7 @@ const VALID_FIELDS: &[&str] = &["s6", "s8", "s9", "a1", "a2", "alp"];
 /// # Errors
 ///
 /// Returns an error if:
-/// - `version` is missing or unrecognized
+/// - `version` is unrecognized
 /// - `method` is specified but not found in the database
 /// - A field not valid for DFT-D4 is present
 /// - Required damping parameters are missing
@@ -92,11 +95,8 @@ pub fn dftd4_parse_damping_param(input: &Table) -> DFTD4DampingParam {
 }
 
 pub fn dftd4_parse_damping_param_f(input: &Table) -> Result<DFTD4DampingParam, DFTD4Error> {
-    // 1. Extract version (required)
-    let version_raw = input
-        .get("version")
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| DFTD4Error::ParametersError("Missing required field 'version'".into()))?;
+    // 1. Extract version (optional, defaults to bj-eeq-atm)
+    let version_raw = input.get("version").and_then(|v| v.as_str()).unwrap_or("d4");
     let version = normalize_version(version_raw);
 
     // 2. Extract method (optional)
@@ -203,7 +203,6 @@ pub fn dftd4_parse_damping_param_from_toml(input: &str) -> DFTD4DampingParam {
 ///
 /// Returns an error if:
 /// - TOML parsing fails
-/// - Required field `version` is missing
 /// - Method not found in database
 /// - Unknown parameter field
 /// - Parameter deserialization fails

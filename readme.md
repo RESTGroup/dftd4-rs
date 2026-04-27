@@ -72,11 +72,12 @@ use dftd4::prelude::*;
 
 // Use custom parameters by toml string
 // Note: version = "d4", "d4bj", "bj", or "atm" all resolve to bj-eeq-atm (the default)
+// The version field is optional — omitting it also defaults to bj-eeq-atm.
 let input = r#"{version = "d4bj", a1 = 0.40868035, s8 = 2.02929367, a2 = 4.53807137, atm = false}"#;
 // You can also use the following input to specify B3LYP-D4 parameters
 // let input = r#"{version = "d4bj", method = "b3lyp"}"#;
-// Or simply: version = "d4" also works (defaults to bj-eeq-atm)
-// let input = r#"{version = "d4", method = "b3lyp"}"#;
+// Or simply omit version (defaults to bj-eeq-atm):
+// let input = r#"{method = "b3lyp"}"#;
 // toml parameter type
 let damping_param = dftd4_parse_damping_param_from_toml(input);
 // FFI parameter type

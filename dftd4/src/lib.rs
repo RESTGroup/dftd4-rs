@@ -7,7 +7,7 @@ module. The commonly used functions and structs can be
 
 - [`DFTD4Model`](interface::DFTD4Model): serve as main driver struct for DFTD4.
 - [`dftd4_load_param`](interface::dftd4_load_param): load parameters with xc-functional and DFT-D4 version specified.
-- [`dftd4_parse_damping_param_from_toml`](parsing::dftd4_parse_damping_param_from_toml): parse damping parameters from TOML string (supports method lookup and overrides). Note that `version = "d4"`, `"d4bj"`, `"bj"`, or `"atm"` all resolve to the default **bj-eeq-atm** variant. Please refer to [parsing] module for more details and examples.
+- [`dftd4_parse_damping_param_from_toml`](parsing::dftd4_parse_damping_param_from_toml): parse damping parameters from TOML string (supports method lookup and overrides). The `version` field is optional and defaults to **bj-eeq-atm**; `version = "d4"`, `"d4bj"`, `"bj"`, or `"atm"` all resolve to the same variant. Please refer to [parsing] module for more details and examples.
 
 To specify custom DFT-D4 parameters, some structs you may interest.
 
