@@ -2,7 +2,7 @@
 
 This project contains dftd4 FFI bindings, wrapper and build-from-source.
 
-Current binding of dftd4: [![v4.1.0](https://img.shields.io/github/v/release/dftd4/dftd4)](https://github.com/dftd4/dftd4/releases/v4.1.0)
+Current binding of dftd4: [![v4.1.0](https://img.shields.io/github/v/release/dftd4/dftd4?filter=v4.1.0)](https://github.com/dftd4/dftd4/releases/v4.1.0)
 
 Source code of dftd4 is available on [github](https://github.com/dftd4/dftd4).
 
