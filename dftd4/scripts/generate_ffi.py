@@ -46,6 +46,7 @@ api_versions = [
     ("V_3_4", "api-v3_4"),
     ("V_3_5", "api-v3_5"),
     ("V_4_0", "api-v4_0"),
+    ("V_4_2", "api-v4_2"),
 ]
 
 # Default API version (used when no features are specified)
@@ -145,7 +146,8 @@ def generate_static_ffi(token, version_map):
 //! - `api-v3_3`: Extends api-v3_2
 //! - `api-v3_4`: Extends api-v3_3
 //! - `api-v3_5`: Extends api-v3_4, adds numerical hessian
-//! - `api-v4_0`: Full API, adds D4S model
+//! - `api-v4_0`: Extends api-v3_5, adds D4S model
+//! - `api-v4_2`: Extends api-v4_0, adds realspace cutoff setters
 //!
 //! Features are cumulative: enabling `api-v3_5` also enables all functions from
 //! earlier versions (api-v3_0, api-v3_1, api-v3_2, api-v3_3, api-v3_4).

@@ -38,3 +38,4 @@ These are constant rules that always apply when working on version updates. For 
 | v3.4 | `V_3_4` | (Reserved) | — | `api-v3_4` |
 | v3.5 | `V_3_5` | Numerical hessian | — | `api-v3_5` |
 | v4.0 | `V_4_0` | D4S model (new + custom) | — | `api-v4_0` |
+| v4.2 | `V_4_2` | Realspace cutoff setters | — | `api-v4_2` |

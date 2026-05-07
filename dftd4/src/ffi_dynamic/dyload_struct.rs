@@ -61,6 +61,20 @@ pub struct DyLoadLib {
         ) -> dftd4_model,
     >,
     pub dftd4_delete_model: Option<unsafe extern "C" fn(arg1: *mut dftd4_model)>,
+    pub dftd4_set_model_realspace_cutoff: Option<
+        unsafe extern "C" fn(arg1: dftd4_error, arg2: dftd4_model, arg3: f64, arg4: f64, arg5: f64),
+    >,
+    pub dftd4_set_model_realspace_cutoff_smooth: Option<
+        unsafe extern "C" fn(
+            arg1: dftd4_error,
+            arg2: dftd4_model,
+            arg3: f64,
+            arg4: f64,
+            arg5: f64,
+            arg6: f64,
+            arg7: f64,
+        ),
+    >,
     pub dftd4_new_rational_damping: Option<
         unsafe extern "C" fn(
             arg1: dftd4_error,

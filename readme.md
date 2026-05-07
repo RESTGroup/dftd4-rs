@@ -2,7 +2,7 @@
 
 This project contains dftd4 FFI bindings, wrapper and build-from-source.
 
-Current binding of dftd4: [![v4.1.0](https://img.shields.io/github/v/release/dftd4/dftd4?filter=v4.1.0)](https://github.com/dftd4/dftd4/releases/v4.1.0)
+Current binding of dftd4: [![v4.2.0](https://img.shields.io/github/v/release/dftd4/dftd4?filter=v4.2.0)](https://github.com/dftd4/dftd4/releases/v4.2.0)
 
 Source code of dftd4 is available on [github](https://github.com/dftd4/dftd4).
 
@@ -16,7 +16,7 @@ This crate contains dftd4 FFI bindings and wrapper.
 |--|--|
 | Crate | [![Crate](https://img.shields.io/crates/v/dftd4.svg)](https://crates.io/crates/dftd4) |
 | API Document | [![API Documentation](https://docs.rs/dftd4/badge.svg)](https://docs.rs/dftd4) |
-| FFI Binding | [![v4.1.0](https://img.shields.io/github/v/release/dftd4/dftd4?filter=v4.1.0)](https://github.com/dftd4/dftd4/releases/v4.1.0) |
+| FFI Binding | [![v4.2.0](https://img.shields.io/github/v/release/dftd4/dftd4?filter=v4.2.0)](https://github.com/dftd4/dftd4/releases/v4.2.0) |
 
 ### Dynamic loading guide
 
@@ -105,11 +105,13 @@ println!("Dispersion energy: {eng}");
 
 Default cargo features of `dftd4` are:
 - **`api-v4_0`**: Corresponding to the original dftd4 [v4.0](https://github.com/dftd4/dftd4/releases/tag/v4.0.0). This will enable rational damping (BJ), custom D4 model, pairwise dispersion, properties, and numerical hessian. D4S model also included in `api-v4_0`.
+- **`api-v4_2`**: Corresponding to the original dftd4 [v4.2](https://github.com/dftd4/dftd4/releases/tag/v4.2.0). Extends `api-v4_0` with realspace cutoff setters.
 - **`dynamic_loading`**: This will enable dynamic loading of `libdftd4` library, which can be more flexible for users who do not want to perform static linking. Please place `libdftd4.so` in `LD_LIBRARY_PATH` (for macos, place `libdftd4.dylib` in `DYLD_LIBRARY_PATH`), or make dftd4 available in your python environment, and function symbols will be loaded at runtime.
 
 Other cargo features of `dftd4` are:
-- **`api-v3_0`** through **`api-v4_0`**: Versioned API features (cumulative). Each version enables all functions introduced in that version. Note: dynamic loading ignores API version features — all functions are available at runtime.
+- **`api-v3_0`** through **`api-v4_2`**: Versioned API features (cumulative). Each version enables all functions introduced in that version. Note: dynamic loading ignores API version features — all functions are available at runtime.
 - **`api-v4_0`**: Enables D4S dispersion model support.
+- **`api-v4_2`**: Enables realspace cutoff setters.
 
 ## Installation guide and Crate `dftd4-src`
 
@@ -171,7 +173,7 @@ If you have not compiled `dftd4` library, you may try out cargo feature `build_f
 
     CMake configurable variables (can be defined as environment variables):
     - `DFTD4_SRC`: git repository source directory or URL;
-    - `DFTD4_VER`: version of DFT-D4 (default v4.1.0);
+    - `DFTD4_VER`: version of DFT-D4 (default v4.2.0);
 
 - **`static`**: This will link static libary instead of dynamic one. Please note that 1. static linking may require additional Fortran and OpenMP linking, which is not provided in this crate; 2. staticly linking LGPL-3.0 license may require your project to be GPL-3.0.
 
