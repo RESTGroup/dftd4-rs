@@ -659,8 +659,7 @@ impl DFTD4Model {
         width2: f64,
         width3: f64,
     ) {
-        self.set_realspace_cutoff_smooth_f(disp2, disp3, cn, width2, width3)
-            .unwrap()
+        self.set_realspace_cutoff_smooth_f(disp2, disp3, cn, width2, width3).unwrap()
     }
 
     /// Evaluate the dispersion energy and its derivatives.
@@ -834,13 +833,7 @@ impl DFTD4Model {
     ) -> Result<(), DFTD4Error> {
         let mut error = DFTD4Error::new();
         unsafe {
-            ffi::dftd4_set_model_realspace_cutoff(
-                error.get_c_ptr(),
-                self.ptr,
-                disp2,
-                disp3,
-                cn,
-            )
+            ffi::dftd4_set_model_realspace_cutoff(error.get_c_ptr(), self.ptr, disp2, disp3, cn)
         };
         match error.check() {
             true => Err(error),
@@ -848,7 +841,8 @@ impl DFTD4Model {
         }
     }
 
-    /// Set realspace cutoffs with smoothing widths (quantities in Bohr, failable).
+    /// Set realspace cutoffs with smoothing widths (quantities in Bohr,
+    /// failable).
     ///
     /// # See also
     ///
