@@ -62,7 +62,7 @@ api-vX_Y = ["api-v<PREVIOUS>"]
 
 Rules:
 - Must extend the **previous** feature (cumulative chain)
-- Consider whether to update `default`
+- Do **not** update the `default` feature — leave it for manual editing
 
 ## Step 4: Update interface.rs (safe wrappers)
 
@@ -142,7 +142,11 @@ Update `dftd4-src/external_deps/` and `build.rs` if needed.
 
 ## Step 10: Update CI
 
-Check if CI needs: newer dftd4 version, updated test matrix, new test cases.
+Update `.github/workflows/test-dftd4.yml` to use the new feature version:
+- Replace `api-v<PREVIOUS>` with `api-vX_Y` in all `cargo test` commands
+- This applies to both the `test-static-linking` and `test-dynamic-loading` jobs
+
+Also check if other CI files need updates: newer conda-forge package version, updated test matrix, new test cases.
 
 ## Step 11: Test
 
