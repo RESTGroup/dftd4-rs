@@ -422,6 +422,34 @@ fn test_error_model() {
     assert!(param.is_err_and(|e| e.to_string().contains("not known")));
 }
 
+#[cfg(feature = "api-v4_2")]
+fn test_smooth_realspace_cutoff() {
+    // Check smooth cutoff support changes dispersion energy
+    let numbers = vec![6, 6, 6, 1, 1, 1, 1];
+    #[rustfmt::skip]
+    let positions = vec![
+        0.00000000000000,  0.00000000000000, -1.79755622305860,
+        0.00000000000000,  0.00000000000000,  0.95338756106749,
+        0.00000000000000,  0.00000000000000,  3.22281255790261,
+       -0.96412815539807, -1.66991895015711, -2.53624948351102,
+       -0.96412815539807,  1.66991895015711, -2.53624948351102,
+        1.92825631079613,  0.00000000000000, -2.53624948351102,
+        0.00000000000000,  0.00000000000000,  5.23010455462158,
+    ];
+
+    let param = DFTD4Param::load_rational_damping("pbe", false);
+
+    // Get reference energy with default cutoffs
+    let mut model = DFTD4Model::new(&numbers, &positions, None, None, None);
+    let ref_energy = model.get_dispersion(&param, false).energy;
+
+    // Set tight cutoffs with smoothing, should change the energy
+    model.set_realspace_cutoff_smooth(4.0, 4.0, 30.0, 2.0, 2.0);
+    let res_energy = model.get_dispersion(&param, false).energy;
+
+    assert_ne!(ref_energy, res_energy);
+}
+
 #[test]
 fn test() {
     test_rational_damping_noargs();
@@ -437,6 +465,8 @@ fn test() {
     #[cfg(feature = "api-v3_1")]
     test_properties();
     test_error_model();
+    #[cfg(feature = "api-v4_2")]
+    test_smooth_realspace_cutoff();
 }
 
 fn main() {
@@ -453,4 +483,6 @@ fn main() {
     #[cfg(feature = "api-v3_1")]
     test_properties();
     test_error_model();
+    #[cfg(feature = "api-v4_2")]
+    test_smooth_realspace_cutoff();
 }

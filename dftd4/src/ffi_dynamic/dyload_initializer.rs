@@ -28,6 +28,16 @@ impl DyLoadLib {
             dftd4_custom_d4_model: get_symbol(&libs, b"dftd4_custom_d4_model\0").map(|sym| *sym),
             dftd4_custom_d4s_model: get_symbol(&libs, b"dftd4_custom_d4s_model\0").map(|sym| *sym),
             dftd4_delete_model: get_symbol(&libs, b"dftd4_delete_model\0").map(|sym| *sym),
+            dftd4_set_model_realspace_cutoff: get_symbol(
+                &libs,
+                b"dftd4_set_model_realspace_cutoff\0",
+            )
+            .map(|sym| *sym),
+            dftd4_set_model_realspace_cutoff_smooth: get_symbol(
+                &libs,
+                b"dftd4_set_model_realspace_cutoff_smooth\0",
+            )
+            .map(|sym| *sym),
             dftd4_new_rational_damping: get_symbol(&libs, b"dftd4_new_rational_damping\0")
                 .map(|sym| *sym),
             dftd4_load_rational_damping: get_symbol(&libs, b"dftd4_load_rational_damping\0")

@@ -633,6 +633,35 @@ impl DFTD4Model {
         Self::custom_d4_f(numbers, positions, ga, gc, wf, charge, lattice, periodic).unwrap()
     }
 
+    /// Set realspace cutoffs (quantities in Bohr).
+    ///
+    /// - `disp2` - Cutoff for two-body dispersion
+    /// - `disp3` - Cutoff for three-body dispersion
+    /// - `cn` - Cutoff for coordination number
+    #[cfg(feature = "api-v4_2")]
+    pub fn set_realspace_cutoff(&mut self, disp2: f64, disp3: f64, cn: f64) {
+        self.set_realspace_cutoff_f(disp2, disp3, cn).unwrap()
+    }
+
+    /// Set realspace cutoffs with smoothing widths (quantities in Bohr).
+    ///
+    /// - `disp2` - Cutoff for two-body dispersion
+    /// - `disp3` - Cutoff for three-body dispersion
+    /// - `cn` - Cutoff for coordination number
+    /// - `width2` - Smoothing width for two-body dispersion
+    /// - `width3` - Smoothing width for three-body dispersion
+    #[cfg(feature = "api-v4_2")]
+    pub fn set_realspace_cutoff_smooth(
+        &mut self,
+        disp2: f64,
+        disp3: f64,
+        cn: f64,
+        width2: f64,
+        width3: f64,
+    ) {
+        self.set_realspace_cutoff_smooth_f(disp2, disp3, cn, width2, width3).unwrap()
+    }
+
     /// Evaluate the dispersion energy and its derivatives.
     ///
     /// Output `DFTD4Output` contains
@@ -787,6 +816,61 @@ impl DFTD4Model {
         match error.check() {
             true => Err(error),
             false => Ok(Self { ptr, structure }),
+        }
+    }
+
+    /// Set realspace cutoffs (quantities in Bohr, failable).
+    ///
+    /// # See also
+    ///
+    /// [`DFTD4Model::set_realspace_cutoff`]
+    #[cfg(feature = "api-v4_2")]
+    pub fn set_realspace_cutoff_f(
+        &mut self,
+        disp2: f64,
+        disp3: f64,
+        cn: f64,
+    ) -> Result<(), DFTD4Error> {
+        let mut error = DFTD4Error::new();
+        unsafe {
+            ffi::dftd4_set_model_realspace_cutoff(error.get_c_ptr(), self.ptr, disp2, disp3, cn)
+        };
+        match error.check() {
+            true => Err(error),
+            false => Ok(()),
+        }
+    }
+
+    /// Set realspace cutoffs with smoothing widths (quantities in Bohr,
+    /// failable).
+    ///
+    /// # See also
+    ///
+    /// [`DFTD4Model::set_realspace_cutoff_smooth`]
+    #[cfg(feature = "api-v4_2")]
+    pub fn set_realspace_cutoff_smooth_f(
+        &mut self,
+        disp2: f64,
+        disp3: f64,
+        cn: f64,
+        width2: f64,
+        width3: f64,
+    ) -> Result<(), DFTD4Error> {
+        let mut error = DFTD4Error::new();
+        unsafe {
+            ffi::dftd4_set_model_realspace_cutoff_smooth(
+                error.get_c_ptr(),
+                self.ptr,
+                disp2,
+                disp3,
+                cn,
+                width2,
+                width3,
+            )
+        };
+        match error.check() {
+            true => Err(error),
+            false => Ok(()),
         }
     }
 

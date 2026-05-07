@@ -10,7 +10,8 @@
 //! - `api-v3_3`: Extends api-v3_2
 //! - `api-v3_4`: Extends api-v3_3
 //! - `api-v3_5`: Extends api-v3_4, adds numerical hessian
-//! - `api-v4_0`: Full API, adds D4S model
+//! - `api-v4_0`: Extends api-v3_5, adds D4S model
+//! - `api-v4_2`: Extends api-v4_0, adds realspace cutoff setters
 //!
 //! Features are cumulative: enabling `api-v3_5` also enables all functions from
 //! earlier versions (api-v3_0, api-v3_1, api-v3_2, api-v3_3, api-v3_4).
@@ -113,6 +114,26 @@ unsafe extern "C" {
     #[cfg(feature = "api-v3_0")]
     #[doc = " Delete dispersion model"]
     pub fn dftd4_delete_model(arg1: *mut dftd4_model);
+    #[cfg(feature = "api-v4_2")]
+    #[doc = " Set realspace cutoffs (quantities in Bohr)"]
+    pub fn dftd4_set_model_realspace_cutoff(
+        arg1: dftd4_error,
+        arg2: dftd4_model,
+        arg3: f64,
+        arg4: f64,
+        arg5: f64,
+    );
+    #[cfg(feature = "api-v4_2")]
+    #[doc = " Set realspace cutoffs with smoothing widths (quantities in Bohr)"]
+    pub fn dftd4_set_model_realspace_cutoff_smooth(
+        arg1: dftd4_error,
+        arg2: dftd4_model,
+        arg3: f64,
+        arg4: f64,
+        arg5: f64,
+        arg6: f64,
+        arg7: f64,
+    );
     #[cfg(feature = "api-v3_0")]
     #[doc = " Create new rational damping parameters"]
     pub fn dftd4_new_rational_damping(

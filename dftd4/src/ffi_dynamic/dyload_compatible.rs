@@ -84,6 +84,30 @@ pub unsafe fn dftd4_delete_model(arg1: *mut dftd4_model) {
     dyload_lib().dftd4_delete_model.unwrap()(arg1)
 }
 
+pub unsafe fn dftd4_set_model_realspace_cutoff(
+    arg1: dftd4_error,
+    arg2: dftd4_model,
+    arg3: f64,
+    arg4: f64,
+    arg5: f64,
+) {
+    dyload_lib().dftd4_set_model_realspace_cutoff.unwrap()(arg1, arg2, arg3, arg4, arg5)
+}
+
+pub unsafe fn dftd4_set_model_realspace_cutoff_smooth(
+    arg1: dftd4_error,
+    arg2: dftd4_model,
+    arg3: f64,
+    arg4: f64,
+    arg5: f64,
+    arg6: f64,
+    arg7: f64,
+) {
+    dyload_lib().dftd4_set_model_realspace_cutoff_smooth.unwrap()(
+        arg1, arg2, arg3, arg4, arg5, arg6, arg7,
+    )
+}
+
 pub unsafe fn dftd4_new_rational_damping(
     arg1: dftd4_error,
     arg2: f64,

@@ -38,6 +38,7 @@ api-v3_3 = ["api-v3_2"]
 api-v3_4 = ["api-v3_3"]
 api-v3_5 = ["api-v3_4"]
 api-v4_0 = ["api-v3_5"]
+api-v4_2 = ["api-v4_0"]
 
 [package.metadata.docs.rs]
 cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]

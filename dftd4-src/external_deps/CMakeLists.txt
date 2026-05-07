@@ -27,13 +27,13 @@ endif()
 if(DFTD4_VER)
     message(STATUS "User specified version of library (dftd4): ${DFTD4_VER}")
 else()
-    set(DFTD4_VER v4.1.0)
+    set(DFTD4_VER v4.2.0)
     message(STATUS "Download version of library (dftd4): ${DFTD4_VER}")
 endif()
 
 ExternalProject_Add(dftd4
     GIT_REPOSITORY ${DFTD4_SRC}
-    GIT_TAG v4.1.0
+    GIT_TAG v4.2.0
     PREFIX ${PROJECT_BINARY_DIR}/deps
     CMAKE_ARGS
         -GNinja
