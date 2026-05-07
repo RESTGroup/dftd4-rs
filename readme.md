@@ -16,7 +16,11 @@ This crate contains dftd4 FFI bindings and wrapper.
 |--|--|
 | Crate | [![Crate](https://img.shields.io/crates/v/dftd4.svg)](https://crates.io/crates/dftd4) |
 | API Document | [![API Documentation](https://docs.rs/dftd4/badge.svg)](https://docs.rs/dftd4) |
-| FFI Binding | [![v4.1.0](https://img.shields.io/github/v/release/dftd4/dftd4)](https://github.com/dftd4/dftd4/releases/v4.1.0) |
+| FFI Binding | [![v4.1.0](https://img.shields.io/github/v/release/dftd4/dftd4?filter=v4.1.0)](https://github.com/dftd4/dftd4/releases/v4.1.0) |
+
+### Dynamic loading guide
+
+This crate will default to dynamic loading (unless unset cargo feature `dynamic_loading`). Please refer to module [`ffi_dynamic`](https://docs.rs/dftd4/latest/dftd4/ffi_dynamic/index.html) for more details of dynamic loading.
 
 ### Example: B97m with D4
 
