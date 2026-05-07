@@ -104,8 +104,7 @@ println!("Dispersion energy: {eng}");
 ### Cargo features of `dftd4`
 
 Default cargo features of `dftd4` are:
-- **`api-v4_0`**: Corresponding to the original dftd4 [v4.0](https://github.com/dftd4/dftd4/releases/tag/v4.0.0). This will enable rational damping (BJ), custom D4 model, pairwise dispersion, properties, and numerical hessian. D4S model also included in `api-v4_0`.
-- **`api-v4_2`**: Corresponding to the original dftd4 [v4.2](https://github.com/dftd4/dftd4/releases/tag/v4.2.0). Extends `api-v4_0` with realspace cutoff setters.
+- **`api-v3_5`**: Corresponding to the original dftd4 [v3.5](https://github.com/dftd4/dftd4/releases/tag/v3.5). If higher API version features are required, you need to manually enable them by setting cargo features `api-v4_2`.
 - **`dynamic_loading`**: This will enable dynamic loading of `libdftd4` library, which can be more flexible for users who do not want to perform static linking. Please place `libdftd4.so` in `LD_LIBRARY_PATH` (for macos, place `libdftd4.dylib` in `DYLD_LIBRARY_PATH`), or make dftd4 available in your python environment, and function symbols will be loaded at runtime.
 
 Other cargo features of `dftd4` are:
